@@ -18,6 +18,10 @@ export default defineConfig({
       gecko: {
         id: "account-identifier@example.com",
         strict_min_version: "109.0",
+        // @ts-expect-error
+        data_collection_permissions: {
+          required: ['none'],
+        },
       },
     },
   },
