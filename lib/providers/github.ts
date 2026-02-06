@@ -12,6 +12,14 @@ export const githubProvider: ServiceProvider = {
   displayName: "GitHub",
   urlPatterns: ["*://github.com/*"],
 
+  extractLoggedInUser(): string | null {
+    const meta = document.querySelector('meta[name="user-login"]');
+    if (!meta) return null;
+    const content = meta.getAttribute("content");
+    if (!content || content.trim() === "") return null;
+    return content.trim();
+  },
+
   extractOwnerFromUrl(url: URL): string | null {
     const segments = url.pathname.split("/").filter(Boolean);
     if (segments.length === 0) return null;

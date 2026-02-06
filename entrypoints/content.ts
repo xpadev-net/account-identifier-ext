@@ -31,6 +31,18 @@ async function checkCurrentPage(): Promise<void> {
     const provider = getProviderForUrl(url);
     if (!provider) return;
 
+    // Auto-register logged-in user before redirect check
+    if (provider.extractLoggedInUser) {
+      const loggedInUser = provider.extractLoggedInUser();
+      if (loggedInUser) {
+        await browser.runtime.sendMessage({
+          type: "autoRegister",
+          serviceId: provider.id,
+          accountId: loggedInUser,
+        } satisfies MessageRequest);
+      }
+    }
+
     const owner = provider.extractOwnerFromUrl(url);
     if (!owner) return;
 

@@ -39,6 +39,44 @@ export default defineBackground(() => {
         })();
       }
 
+      if (message.type === "autoRegister") {
+        const tabId = sender.tab?.id;
+        if (tabId == null) return undefined;
+        return (async () => {
+          const tab = await browser.tabs.get(tabId) as unknown as FirefoxTab;
+          const cookieStoreId = tab.cookieStoreId ?? "firefox-default";
+          const mappings = await containerMappings.getValue();
+
+          // Skip if the account is already registered in any container (case-insensitive)
+          const accountLower = message.accountId.toLowerCase();
+          for (const mapping of mappings) {
+            for (const service of mapping.services) {
+              if (
+                service.serviceId === message.serviceId &&
+                service.accountIds.some((id) => id.toLowerCase() === accountLower)
+              ) {
+                return { type: "autoRegisterResult" as const, registered: false };
+              }
+            }
+          }
+
+          // Register in the current container
+          let containerMapping = mappings.find((m) => m.cookieStoreId === cookieStoreId);
+          if (!containerMapping) {
+            containerMapping = { cookieStoreId, services: [] };
+            mappings.push(containerMapping);
+          }
+          let serviceMapping = containerMapping.services.find((s) => s.serviceId === message.serviceId);
+          if (!serviceMapping) {
+            serviceMapping = { serviceId: message.serviceId, accountIds: [] };
+            containerMapping.services.push(serviceMapping);
+          }
+          serviceMapping.accountIds.push(message.accountId);
+          await containerMappings.setValue(mappings);
+          return { type: "autoRegisterResult" as const, registered: true };
+        })();
+      }
+
       if (message.type === "openInContainer") {
         const tabId = message.currentTabId === "fromSender" ? sender.tab?.id : message.currentTabId;
         if (tabId == null) return undefined;

@@ -5,4 +5,5 @@ export interface ServiceProvider {
   displayName: string;
   urlPatterns: string[];
   extractOwnerFromUrl(url: URL): string | null;
+  extractLoggedInUser?(): string | null;
 }
