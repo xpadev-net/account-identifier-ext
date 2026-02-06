@@ -16,7 +16,7 @@ export default defineConfig({
     host_permissions: ["*://github.com/*"],
     browser_specific_settings: {
       gecko: {
-        id: "account-identifier@example.com",
+        id: "account-identifier@xpa.dev",
         strict_min_version: "109.0",
         // @ts-expect-error
         data_collection_permissions: {
