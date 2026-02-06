@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "account-identifier",
+  "description": "Firefox extension that prevents accidental operations on wrong accounts when using Multi-Account Containers.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
